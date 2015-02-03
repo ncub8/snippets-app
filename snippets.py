@@ -50,7 +50,7 @@ def main():
       name, snippet = put(**arguments)
       print("Stored {!r} as {!r}".format(snippet,name))
     elif command == "get":
-      snippet.get(**arguments)
+      snippet = get(**arguments)
       print("Retrieved snippet {!r}".format(snippet))
 
 if __name__ == "__main__":
