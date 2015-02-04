@@ -41,16 +41,16 @@ def get(name):
   logging.info("Getting snippet - get({!r})".format(name))
     
   cursor = connection.cursor()
-  command = "select message from snippets where keyword=%s"
-  cursor.execute(command,(name,))
-  message = cursor.fetchone()               
-  connection.commit()
-  if not message:
+  with connection, connection.cursor() as cursor:
+    cursor.execute("select message from snippets where keyword=%s", (name,))
+    row = cursor.fetchone()
+  
+  if not row:
     #no message found
     print('No snippet with that key found')
     return ""
   else:
-    return message[0]
+    return row[0]
   
 def main():
     """Main function"""
