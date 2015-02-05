@@ -53,6 +53,13 @@ def get(name):
   else:
     return row[0]
   
+def catalog(): 
+  """ retrieve all entries """
+  with connection, connection.cursor() as cursor:
+    cursor.execute("select keyword from snippets order by keyword")
+    keywords = cursor.fetchall()
+  return keywords
+  
 def main():
     """Main function"""
     logging.info("Constructing parser")
@@ -71,9 +78,16 @@ def main():
     get_parser = subparser.add_parser("get",help="retrieve a snippet")
     get_parser.add_argument("name",help="The name of the snippet")
     
-    arguments = parser.parse_args(sys.argv[1:])
-    arguments = vars(arguments)
-    command = arguments.pop("command")
+    #subparser for catalog
+    logging.debug("constructing catalog subparser")
+    catalog_parser = subparser.add_parser("catalog",help="list all snippets")
+   
+    if(len(sys.argv) < 2):
+      command = "catalog"
+    else:
+      arguments = parser.parse_args(sys.argv[1:])
+      arguments = vars(arguments)
+      command = arguments.pop("command")
     
     if command == "put":
       name, snippet = put(**arguments)
@@ -81,6 +95,10 @@ def main():
     elif command == "get":
       snippet = get(**arguments)
       print("Retrieved snippet {!r}".format(snippet))
+    elif command == "catalog":
+      keywords = catalog()
+      for keyword in keywords:
+        print(keyword[0])
 
 if __name__ == "__main__":
     main()
